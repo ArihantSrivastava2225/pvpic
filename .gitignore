@@ -1,0 +1,55 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+share/
+python-wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
+
+# Jupyter Notebooks
+.ipynb_checkpoints
+*/.ipynb_checkpoints/*
+
+# Virtual Environments
+venv/
+.venv/
+env/
+ENV/
+env.bak/
+venv.bak/
+
+# Project Datasets (Ignore raw large CSV files)
+dataset/*.csv
+!dataset/sample_submission.csv
+
+# Saved Model Binaries (Ignore large pkl weights)
+models/*.pkl
+
+# CatBoost output files
+catboost_info/
+
+# Output Submissions (Ignore temporary verification outputs)
+submission_check.csv
+# Keep the main submission.csv if you want to share it, or ignore it if preferred:
+# submission.csv
+
+# Environments & Secret keys
+.env
+.env.*
