@@ -23,28 +23,51 @@ is_training = False
 def load_resources():
     global model, model_meta, spots_meta, timeline_df
     try:
-        if os.path.exists("model.joblib"):
-            model = joblib.load("model.joblib")
-            model_meta = joblib.load("model_meta.joblib")
+        base_dir = os.path.dirname(os.path.abspath(__file__))
+        model_path = os.path.join(base_dir, "model.joblib")
+        meta_path = os.path.join(base_dir, "model_meta.joblib")
+        spots_path = os.path.join(base_dir, "spots_meta.json")
+        timeline_path = os.path.join(base_dir, "timeline_data.csv")
+
+        if os.path.exists(model_path):
+            model = joblib.load(model_path)
+            model_meta = joblib.load(meta_path)
             print("Model and metadata loaded.")
         else:
-            print("WARNING: model.joblib not found. Run build_model.py first!")
+            print(f"WARNING: {model_path} not found. Run build_model.py first!")
 
-        if os.path.exists("spots_meta.json"):
-            with open("spots_meta.json", "r") as f:
+        if os.path.exists(spots_path):
+            with open(spots_path, "r") as f:
                 spots_meta = json.load(f)
             print("Spots metadata loaded.")
         else:
-            print("WARNING: spots_meta.json not found.")
+            print(f"WARNING: {spots_path} not found.")
 
-        if os.path.exists("timeline_data.csv"):
-            timeline_df = pd.read_csv("timeline_data.csv")
+        if os.path.exists(timeline_path):
+            dtypes = {
+                'spot_id': 'int16',
+                'violations_count': 'int16',
+                'raw_tos': 'float32',
+                'congestion_index': 'float32',
+                'hour_of_day': 'int8',
+                'day_of_week': 'int8',
+                'is_weekend': 'int8',
+                'prev_day_TOS': 'float32',
+                'prev_week_TOS': 'float32',
+                'rolling_TOS_24h': 'float32',
+                'spot_avg_TOS': 'float32',
+                'spot_hour_weekday_avg_TOS': 'float32'
+            }
+            timeline_df = pd.read_csv(timeline_path, dtype=dtypes)
             timeline_df['hour_bin'] = pd.to_datetime(timeline_df['hour_bin'])
-            print("Timeline data loaded.")
+            print("Timeline data loaded with optimized memory footprint.")
         else:
-            print("WARNING: timeline_data.csv not found.")
+            print(f"WARNING: {timeline_path} not found.")
     except Exception as e:
         print(f"Error loading resources: {e}")
+
+# Load resources at startup so they are available when imported by WSGI servers like Gunicorn
+load_resources()
 
 # Helper: Find closest hotspot centroid within 150m (0.00135 degrees approx)
 def allocate_to_nearest_spot(lat, lon):
@@ -366,7 +389,9 @@ def ingest_data():
     timeline_df['rolling_TOS_24h'] = timeline_df.groupby('spot_id')['congestion_index'].shift(1).rolling(24).mean()
 
     # Save to disk
-    timeline_df.to_csv("timeline_data.csv", index=False)
+    base_dir = os.path.dirname(os.path.abspath(__file__))
+    timeline_path = os.path.join(base_dir, "timeline_data.csv")
+    timeline_df.to_csv(timeline_path, index=False)
     print("timeline_data.csv updated on disk.")
     
     return jsonify({
@@ -462,5 +487,4 @@ def get_stats():
     })
 
 if __name__ == "__main__":
-    load_resources()
     app.run(host="0.0.0.0", port=5000, debug=False)

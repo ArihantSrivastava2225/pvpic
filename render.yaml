@@ -1,0 +1,25 @@
+services:
+  # 1. Flask API Backend Web Service
+  - type: web
+    name: pvpic-backend
+    runtime: python
+    plan: free
+    buildCommand: pip install -r backend/requirements.txt
+    startCommand: gunicorn --chdir backend app:app --bind 0.0.0.0:$PORT
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.12.3
+
+  # 2. Vite React Frontend Static Site
+  - type: web
+    name: pvpic-frontend
+    runtime: static
+    plan: free
+    buildCommand: cd frontend && npm install && npm run build
+    staticPublishPath: frontend/dist
+    envVars:
+      - key: VITE_API_URL
+        fromService:
+          name: pvpic-backend
+          type: web
+          property: host

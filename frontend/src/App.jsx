@@ -5,8 +5,9 @@ import { Chart, registerables } from 'chart.js';
 // Register all Chart.js components
 Chart.register(...registerables);
 
-// Base API URL pointing to the Flask Backend
-const API_URL = "http://localhost:5000/api";
+// Base API URL pointing to the Flask Backend (resolved dynamically in production)
+const rawApiUrl = import.meta.env.VITE_API_URL || "http://localhost:5000";
+const API_URL = rawApiUrl.endsWith('/api') ? rawApiUrl : `${rawApiUrl}/api`;
 
 export default function App() {
     // 1. Theme and Core states
@@ -568,7 +569,7 @@ export default function App() {
                                             <span className="card-station">📍 {spot.police_station}</span>
                                             <div className="card-metrics">
                                                 <span>Risk: <strong className="metric-val">{score.toFixed(1)}%</strong></span>
-                                                <span>TOS: <strong className="metric-val">{spot.violations_count}</strong></span>
+                                                <span>Violations: <strong className="metric-val">{spot.violations_count}</strong></span>
                                             </div>
                                         </div>
                                     </div>
