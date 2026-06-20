@@ -53,3 +53,5 @@ submission_check.csv
 # Environments & Secret keys
 .env
 .env.*
+
+data/
