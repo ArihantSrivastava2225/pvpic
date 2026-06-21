@@ -6,7 +6,7 @@ An AI-driven traffic obstruction forecasting dashboard and command center built 
 
 ## 🖥️ Command Center Interface Preview
 
-* **Interactive Map**: Renders Leaflet-based hotspot markers colored dynamically by risk level (Green: Low, Yellow: Moderate, Orange: High, Red/Pulse: Critical).
+* **Interactive Map**: Integrates MapmyIndia mapping infrastructure (via Mappls tile layers) with custom Leaflet overlays, rendering hotspot markers colored dynamically by risk level (Green: Low, Yellow: Moderate, Orange: High, Red/Pulse: Critical).
 * **Priority Hotspots Queue**: Ranked queue of the top 20 critical hotspots in the selected jurisdiction.
 * **Live KPI Metrics**: Displays dynamic statistics including Average Risk Index, Critical Choke Zones, and Total Active Violations.
 * **Congestion Analytics**: Real-time projected hourly risk profiles and vehicle breakdown charts.
@@ -122,6 +122,10 @@ Open a new terminal session, navigate to the `frontend/` directory, install Node
 ```bash
 cd frontend
 npm install
+
+# Configure MapmyIndia API Key (Optional: falls back to OpenStreetMap if not set)
+# Create a .env file in the `frontend/` directory with:
+# VITE_MAPMYINDIA_API_KEY=your_key_here
 
 # Run the dev server
 npm run dev

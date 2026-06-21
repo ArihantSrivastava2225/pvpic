@@ -9,6 +9,9 @@ Chart.register(...registerables);
 const rawApiUrl = import.meta.env.VITE_API_URL || "http://localhost:5000";
 const API_URL = rawApiUrl.endsWith('/api') ? rawApiUrl : `${rawApiUrl}/api`;
 
+// MapmyIndia / Mappls API Key configuration (loads proprietary mapping infrastructure)
+const MAPMYINDIA_KEY = import.meta.env.VITE_MAPMYINDIA_API_KEY || "";
+
 export default function App() {
     // 1. Theme and Core states
     const [theme, setTheme] = useState("dark");
@@ -86,12 +89,26 @@ export default function App() {
                 mapRef.current.removeLayer(tileLayerRef.current);
             }
 
-            // Define tile URLs
-            const tileUrl = theme === "dark" 
-                ? "https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png"
-                : "https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png";
+            // Define tile URLs and attributions
+            let tileUrl = "";
+            let attribution = "";
 
-            const newTileLayer = L.tileLayer(tileUrl, { maxZoom: 20 });
+            if (MAPMYINDIA_KEY) {
+                // MapmyIndia / Mappls Vector Raster Tiles integration
+                tileUrl = `https://apis.mappls.com/advancedmaps/v1/${MAPMYINDIA_KEY}/vt/{z}/{x}/{y}.png`;
+                attribution = "© MapmyIndia";
+            } else {
+                // Standard CartoDB maps (fallback)
+                tileUrl = theme === "dark" 
+                    ? "https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png"
+                    : "https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png";
+                attribution = '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> &copy; <a href="https://carto.com/attributions">CARTO</a>';
+            }
+
+            const newTileLayer = L.tileLayer(tileUrl, { 
+                maxZoom: 20,
+                attribution: attribution
+            });
             newTileLayer.addTo(mapRef.current);
             tileLayerRef.current = newTileLayer;
         }
