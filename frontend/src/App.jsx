@@ -95,7 +95,7 @@ export default function App() {
 
             if (MAPMYINDIA_KEY) {
                 // MapmyIndia / Mappls Raster Tiles integration (resolves to standard PNG tiles)
-                tileUrl = `https://apis.mappls.com/advancedmaps/v1/${MAPMYINDIA_KEY}/raster/map_style/{z}/{x}/{y}.png`;
+                tileUrl = `https://apis.mappls.com/advancedmaps/v1/${MAPMYINDIA_KEY}/raster_tile/{z}/{x}/{y}.png`;
                 attribution = "© MapmyIndia";
             } else {
                 // Standard CartoDB maps (fallback)
