@@ -94,8 +94,8 @@ export default function App() {
             let attribution = "";
 
             if (MAPMYINDIA_KEY) {
-                // MapmyIndia / Mappls Vector Raster Tiles integration
-                tileUrl = `https://apis.mappls.com/advancedmaps/v1/${MAPMYINDIA_KEY}/vt/{z}/{x}/{y}.png`;
+                // MapmyIndia / Mappls Raster Tiles integration (resolves to standard PNG tiles)
+                tileUrl = `https://apis.mappls.com/advancedmaps/v1/${MAPMYINDIA_KEY}/raster/map_style/{z}/{x}/{y}.png`;
                 attribution = "© MapmyIndia";
             } else {
                 // Standard CartoDB maps (fallback)
